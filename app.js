@@ -41,6 +41,30 @@ app.get('/', (req, res) => {
   res.send('Invalid Endpoint');
 });
 
+// Catch 440 Errors and forward them to an error handler 
+app.use((req, res, next) => {
+  //console.log(req);
+  const err = new Error(`Route ${req.originalUrl} Not Found`);
+  err.status = 404;
+  next(err);
+});
+
+// Error handler function
+app.use((err, req, res, next) => {
+  const error = err;//app.get('env') === 'development' ? err : {};
+  const status = err.status || 500;
+
+  // Respond to client
+  res.status(status).json({
+    error: {
+      message: error.message
+    }
+  });
+
+  // Respond to ourselves
+  console.error(err);
+});
+
 // Start Server
 app.listen(port, () => {
   console.log('Server started on port '+port);

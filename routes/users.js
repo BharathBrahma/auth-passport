@@ -8,14 +8,17 @@ const User = require('../models/user');
 // Register
 router.post('/register', (req, res, next) => {
   let newUser = new User({
-    name: req.body.name,
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
     email: req.body.email,
     username: req.body.username,
-    password: req.body.password
+    password: req.body.password,
+    isProfessional: req.body.isProfessional
   });
 
   User.addUser(newUser, (err, user) => {
     if(err){
+      console.log(err)
       res.json({success: false, msg:'Failed to register user'});
     } else {
       res.json({success: true, msg:'User registered'});
@@ -46,9 +49,11 @@ router.post('/authenticate', (req, res, next) => {
           token: `Bearer ${token}`,
           user: {
             id: user._id,
-            name: user.name,
+            firstname: user.firstname,
+            lastname: user.lastname,
             username: user.username,
-            email: user.email
+            email: user.email,
+            isProfessional : user.isProfessional
           }
         });
       } else {
